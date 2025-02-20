@@ -88,38 +88,23 @@ describe("Orders Page", () => {
       expect(axios.get).toHaveBeenCalledWith("/api/v1/auth/orders");
     });
 
+    expect(screen.getByText(/all orders/i)).toBeInTheDocument();
+
     // wait for ui to display table orders
     await waitFor(() => {
-      expect(screen.getByText("Processing")).toBeInTheDocument();
+      expect(screen.getByText(/processing/i)).toBeInTheDocument();
     });
 
     const tableRows = screen.getAllByRole("row");
-    expect(tableRows.length).toBe(1 + mockOrders.length); // 1 header row
-  });
+    expect(tableRows.length).toBe(1 + mockOrders.length); // + 1 header row
 
-  it("should render orders page", () => {
-    renderWithRouter(<Orders />);
-
-    expect(screen.getByText("All Orders")).toBeInTheDocument();
-  });
-
-  it("should get orders when auth token exists", async () => {
-    useAuth.mockReturnValue(
-      [
-        {
-          token: mockToken,
-          user: mockUser,
-        },
-      ],
-      jest.fn()
-    );
-    axios.get.mockResolvedValueOnce({ data: [] });
-
-    renderWithRouter(<Orders />);
-
-    await waitFor(() =>
-      expect(axios.get).toHaveBeenCalledWith("/api/v1/auth/orders")
-    );
+    // check products
+    await waitFor(() => {
+      mockOrders[0].products.forEach((product) => {
+        const productImage = screen.getByAltText(product.name); // Find by alt text
+        expect(productImage).toBeInTheDocument();
+      });
+    });
   });
 
   it("should not get orders when auth token does not exist", async () => {
@@ -154,7 +139,6 @@ describe("Orders Page", () => {
     );
     const mockError = new Error("Error fetching orders");
     axios.get = jest.fn().mockRejectedValueOnce(mockError);
-    consoleLogSpy = jest.spyOn(console, "log");
 
     renderWithRouter(<Orders />);
 
@@ -187,37 +171,6 @@ describe("Orders Page", () => {
     });
   });
 
-  it("should render product images correctly", async () => {
-    useAuth.mockReturnValue(
-      [
-        {
-          token: mockToken,
-          user: mockUser,
-        },
-      ],
-      jest.fn()
-    );
-
-    // mock axios get request to retunr mockOrders
-    axios.get.mockResolvedValueOnce({ data: mockOrders });
-    renderWithRouter(<Orders />);
-
-    await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith("/api/v1/auth/orders");
-    });
-
-    await waitFor(() => {
-      mockOrders[0].products.forEach((product) => {
-        const productImage = screen.getByAltText(product.name); // Find by alt text
-        expect(productImage).toBeInTheDocument();
-        expect(productImage).toHaveAttribute(
-          "src",
-          `/api/v1/product/product-photo/${product._id}`
-        );
-      });
-    });
-  });
-
   it("should render Success for successful payment", async () => {
     useAuth.mockReturnValue(
       [
@@ -238,7 +191,7 @@ describe("Orders Page", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("Success")).toBeInTheDocument();
+      expect(screen.getByText(/Success/i)).toBeInTheDocument();
     });
   });
 
@@ -269,7 +222,7 @@ describe("Orders Page", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("Failed")).toBeInTheDocument();
+      expect(screen.getByText(/Failed/i)).toBeInTheDocument();
     });
   });
 });

@@ -19,6 +19,10 @@ jest.mock("../../context/auth", () => ({
   useAuth: jest.fn(() => [null, jest.fn()]), // Mock useAuth hook to return null state and a mock function for setAuth
 }));
 
+jest.mock("../../components/Layout", () => ({ children }) => (
+  <div data-testid="layout">{children}</div>
+));
+
 const renderWithRouter = (ui) => {
   return render(<BrowserRouter>{ui}</BrowserRouter>);
 };
@@ -38,6 +42,7 @@ describe("Dashboard Component", () => {
     useAuth.mockReturnValue([{ user: mockUser }]);
     renderWithRouter(<Dashboard />);
 
+    expect(screen.getByText(mockUser.name)).toBeInTheDocument();
     expect(screen.getByText(mockUser.email)).toBeInTheDocument();
     expect(screen.getByText(mockUser.address)).toBeInTheDocument();
   });
@@ -46,6 +51,7 @@ describe("Dashboard Component", () => {
     useAuth.mockReturnValue([null]);
     renderWithRouter(<Dashboard />);
 
+    expect(screen.queryByText(mockUser.name)).toBeNull();
     expect(screen.queryByText(mockUser.email)).toBeNull();
     expect(screen.queryByText(mockUser.address)).toBeNull();
   });

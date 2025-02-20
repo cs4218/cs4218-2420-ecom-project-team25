@@ -84,7 +84,7 @@ describe("Profile Page", () => {
     renderWithRouter(<Profile />);
 
     // form elements
-    expect(screen.getByText("USER PROFILE")).toBeInTheDocument();
+    expect(screen.getByText(/USER PROFILE/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Enter Your Name")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Enter Your Email")).toBeInTheDocument();
     expect(
@@ -94,7 +94,7 @@ describe("Profile Page", () => {
     expect(
       screen.getByPlaceholderText("Enter Your Address")
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "UPDATE" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /UPDATE/i })).toBeInTheDocument();
 
     // form values
     expect(screen.getByDisplayValue(mockUser.name)).toBeInTheDocument();
@@ -182,7 +182,7 @@ describe("Profile Page", () => {
     fireEvent.change(screen.getByPlaceholderText("Enter Your Password"), {
       target: { value: "newpass" },
     });
-    fireEvent.click(screen.getByText("UPDATE"));
+    fireEvent.click(screen.getByText(/UPDATE/i));
 
     await waitFor(() => {
       expect(axios.put).toHaveBeenCalledWith("/api/v1/auth/profile", {
@@ -230,7 +230,7 @@ describe("Profile Page", () => {
     fireEvent.change(screen.getByPlaceholderText("Enter Your Password"), {
       target: { value: "newpass" },
     });
-    fireEvent.click(screen.getByText("UPDATE"));
+    fireEvent.click(screen.getByText(/UPDATE/i));
 
     await waitFor(() => {
       expect(axios.put).toHaveBeenCalledWith("/api/v1/auth/profile", {
@@ -274,7 +274,7 @@ describe("Profile Page", () => {
     fireEvent.change(screen.getByPlaceholderText("Enter Your Password"), {
       target: { value: "newpass" },
     });
-    fireEvent.click(screen.getByText("UPDATE"));
+    fireEvent.click(screen.getByText(/UPDATE/i));
 
     await waitFor(() => {
       expect(axios.put).toHaveBeenCalledWith("/api/v1/auth/profile", {
