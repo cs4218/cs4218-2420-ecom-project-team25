@@ -84,7 +84,9 @@ describe('SearchInput Component', () => {
   });
 
   it('should log error if an error occurs', async () => {
-    // purposefully not mock the axios.get to get a destructuring error
+    const err = new Error("Error with getting data");
+    axios.get.mockRejectedValueOnce(err);
+
     render(
       <MemoryRouter>
         <Routes>
@@ -103,6 +105,6 @@ describe('SearchInput Component', () => {
       expect(axios.get).toHaveBeenCalled();
     });
 
-    expect(logSpy).toHaveBeenCalled();
+    expect(logSpy).toHaveBeenCalledWith(err);
   });
 });
