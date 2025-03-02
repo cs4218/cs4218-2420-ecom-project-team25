@@ -76,24 +76,28 @@ describe('Product Model', () => {
   it('should be able to create a product without a photo', () => {
     const productModelWithoutPhoto = {
       ...product1,
-      photo: undefined, 
-    }
+      photo: undefined,
+    };
 
     mockingoose(productModel).toReturn(productModelWithoutPhoto, 'save');
     return productModel.create(productModelWithoutPhoto).then((product) => {
-      expect(JSON.parse(JSON.stringify(product))).toEqual(productModelWithoutPhoto);
+      expect(JSON.parse(JSON.stringify(product))).toEqual(
+        productModelWithoutPhoto
+      );
     });
   });
 
   it('should be able to create a product without shipping information', () => {
     const productModelWithoutShipping = {
       ...product1,
-      shipping: undefined, 
-    }
+      shipping: undefined,
+    };
 
     mockingoose(productModel).toReturn(productModelWithoutShipping, 'save');
     return productModel.create(productModelWithoutShipping).then((product) => {
-      expect(JSON.parse(JSON.stringify(product))).toEqual(productModelWithoutShipping);
+      expect(JSON.parse(JSON.stringify(product))).toEqual(
+        productModelWithoutShipping
+      );
     });
   });
 
@@ -116,6 +120,70 @@ describe('Product Model', () => {
             JSON.parse(JSON.stringify(product))
           );
         });
+    });
+  });
+
+  it('should error out if name is not provided', () => {
+    const productModelWithoutName = { ...product1, name: undefined };
+    mockingoose(productModel).toReturn(productModelWithoutName, 'save');
+
+    return productModel.create(productModelWithoutName).catch((error) => {
+      expect(error).toBeInstanceOf(Error);
+    });
+  });
+
+  it('should error out if slug is not provided', () => {
+    const productModelWithoutSlug = { ...product1, slug: undefined };
+    mockingoose(productModel).toReturn(productModelWithoutSlug, 'save');
+
+    // inspired by GitHub Copilot
+    return productModel.create(productModelWithoutSlug).catch((error) => {
+      expect(error).toBeInstanceOf(Error);
+    });
+  });
+
+  it('should error out if description is not provided', () => {
+    const productModelWithoutDescription = {
+      ...product1,
+      description: undefined,
+    };
+    mockingoose(productModel).toReturn(productModelWithoutDescription, 'save');
+
+    return productModel
+      .create(productModelWithoutDescription)
+      .catch((error) => {
+        // inspired by GitHub Copilot
+        expect(error).toBeInstanceOf(Error);
+      });
+  });
+
+  it('should error out if price is not provided', () => {
+    const productModelWithoutPrice = { ...product1, price: undefined };
+    mockingoose(productModel).toReturn(productModelWithoutPrice, 'save');
+
+    return productModel.create(productModelWithoutPrice).catch((error) => {
+      // inspired by GitHub Copilot
+      expect(error).toBeInstanceOf(Error);
+    });
+  });
+
+  it('should error out if category is not provided', () => {
+    const productModelWithoutCategory = { ...product1, category: undefined };
+    mockingoose(productModel).toReturn(productModelWithoutCategory, 'save');
+
+    return productModel.create(productModelWithoutCategory).catch((error) => {
+      // inspired by GitHub Copilot
+      expect(error).toBeInstanceOf(Error);
+    });
+  });
+
+  it('should error out if quantity is not provided', () => {
+    const productModelWithoutQuantity = { ...product1, quantity: undefined };
+    mockingoose(productModel).toReturn(productModelWithoutQuantity, 'save');
+
+    return productModel.create(productModelWithoutQuantity).catch((error) => {
+      // inspired by GitHub Copilot
+      expect(error).toBeInstanceOf(Error);
     });
   });
 });
