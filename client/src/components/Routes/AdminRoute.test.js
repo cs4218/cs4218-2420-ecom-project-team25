@@ -35,11 +35,21 @@ describe('AdminRoute', () => {
     consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
   });
 
+  // reuses Header.test.js
+  beforeAll(() => {
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        removeItem: jest.fn(),
+      },
+      writable: true,
+    });
+  });
+
   afterAll(() => {
     consoleSpy.mockRestore();
   });
 
-  it('should return Spinner by default if no auth token is present', () => {
+  it('should return Spinner by default if no auth token is present', async () => {
     useAuth.mockReturnValueOnce([{}, jest.fn()]);
     expect(AdminRoute()).toStrictEqual(<Spinner />);
 
@@ -48,9 +58,13 @@ describe('AdminRoute', () => {
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
     expect(axios.get).not.toHaveBeenCalled();
     expect(consoleSpy).not.toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(localStorage.removeItem).not.toHaveBeenCalled();
+    });
   });
 
-  it('should return Outlet if auth token is present and authCheck returns false', () => {
+  it('should return Outlet if auth token is present and authCheck returns false', async () => {
     useAuth.mockReturnValueOnce([{ token: 'token' }, jest.fn()]);
     axios.get.mockResolvedValueOnce({ data: { ok: false } });
 
@@ -59,11 +73,19 @@ describe('AdminRoute', () => {
     render(<AdminRoute />);
 
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
-    expect(axios.get).toHaveBeenCalledWith('/api/v1/auth/admin-auth');
+
+    await waitFor(() => {
+      expect(axios.get).toHaveBeenCalledWith('/api/v1/auth/admin-auth');
+    });
+
+    await waitFor(() => {
+      expect(localStorage.removeItem).toHaveBeenCalledWith('auth');
+    });
+
     expect(consoleSpy).not.toHaveBeenCalled();
   });
 
-  it('should return Outlet if auth token is present and authCheck returns true', () => {
+  it('should return Outlet if auth token is present and authCheck returns true', async () => {
     useAuth.mockReturnValueOnce([{ token: 'token' }, jest.fn()]);
     axios.get.mockResolvedValueOnce({ data: { ok: true } });
     useState.mockReturnValueOnce([true, jest.fn()]);
@@ -75,13 +97,17 @@ describe('AdminRoute', () => {
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
     expect(axios.get).toHaveBeenCalledWith('/api/v1/auth/admin-auth');
     expect(consoleSpy).not.toHaveBeenCalled();
+
+    await waitFor(() => {
+      expect(localStorage.removeItem).not.toHaveBeenCalled();
+    });
   });
 
   it('should not crash if get errors out', async () => {
     const err = new Error('Failed to query auth status');
     axios.get.mockRejectedValueOnce(err);
     useAuth.mockReturnValueOnce([{ token: 'token' }, jest.fn()]);
-    
+
     render(<AdminRoute />);
 
     await waitFor(() => {
@@ -90,6 +116,10 @@ describe('AdminRoute', () => {
 
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith(err);
+    });
+
+    await waitFor(() => {
+      expect(localStorage.removeItem).toHaveBeenCalledWith('auth');
     });
   });
 });

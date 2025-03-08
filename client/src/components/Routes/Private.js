@@ -16,10 +16,20 @@ export default function PrivateRoute() {
         if (res.data.ok) {
           setOk(true);
         } else {
+          setAuth({
+            user: null,
+            token: '',
+          });
+          localStorage.removeItem('auth');
           setOk(false);
         }
       } catch (err) {
         console.log(err);
+        setAuth({
+          user: null,
+          token: '',
+        });
+        localStorage.removeItem('auth');
         setOk(false);
       }
     };
