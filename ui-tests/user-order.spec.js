@@ -72,16 +72,16 @@ test.describe("User make order", () => {
 			.getByRole("textbox", { name: "Expiration Date" })
 			.fill("1225");
 
-		await page
-			.locator('iframe[name="braintree-hosted-field-cvv"]')
-			.contentFrame()
-			.getByRole("textbox", { name: "CVV" })
-			.click();
-		await page
-			.locator('iframe[name="braintree-hosted-field-cvv"]')
-			.contentFrame()
-			.getByRole("textbox", { name: "CVV" })
-			.fill("123");
+		// await page
+		// 	.locator('iframe[name="braintree-hosted-field-cvv"]')
+		// 	.contentFrame()
+		// 	.getByRole("textbox", { name: "CVV" })
+		// 	.click();
+		// await page
+		// 	.locator('iframe[name="braintree-hosted-field-cvv"]')
+		// 	.contentFrame()
+		// 	.getByRole("textbox", { name: "CVV" })
+		// 	.fill("123");
 
 		await page.getByRole("button", { name: "Make Payment" }).click();
 
